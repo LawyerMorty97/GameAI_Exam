@@ -53,9 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\FieldManager.cs" />
+     <Compile Include="Assets\Scripts\BallStateMachine.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\StateMachine.cs" />
+     <Compile Include="Assets\Scripts\UIManager.cs" />
      <Compile Include="Assets\Scripts\VelocityScript.cs" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>D:/Repositories/GameAI_Exam/Project/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
