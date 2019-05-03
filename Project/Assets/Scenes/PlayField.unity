@@ -2100,6 +2100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 988a5d7716107064ab02cd88b0f3b719, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   helper: {fileID: 2048297298}
 --- !u!114 &1159342945
 MonoBehaviour:
@@ -3342,7 +3343,6 @@ GameObject:
   - component: {fileID: 2048297296}
   - component: {fileID: 2048297299}
   - component: {fileID: 2048297298}
-  - component: {fileID: 2048297297}
   m_Layer: 5
   m_Name: CurrentMode
   m_TagString: Untagged
@@ -3369,19 +3369,6 @@ RectTransform:
   m_AnchoredPosition: {x: -90, y: 15.000004}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2048297297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2048297295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0098bb6ed6b62b4e894deda4ab8314a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  textElement: 4
 --- !u!114 &2048297298
 MonoBehaviour:
   m_ObjectHideFlags: 0

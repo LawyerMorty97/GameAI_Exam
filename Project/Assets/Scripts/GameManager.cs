@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
         private set;
     }
 
+    private Grid _grid;
     private GameObject _scorer;
     private StateMachine _machine;
     private BallStateMachine _ballMachine;
@@ -109,6 +110,7 @@ public class GameManager : MonoBehaviour
         {
             RedScore = 0;
             BlueScore = 0;
+            _gameState = GameState.Drawing;
         }
         yield return new WaitForSeconds(1f);
         _gameState = GameState.Running;
@@ -132,7 +134,14 @@ public class GameManager : MonoBehaviour
         _playerMachine = _scorer.GetComponent<VelocityScript>();
 
         _pather = GetComponent<PathingManager>();
-        _pather.StartDrawing();
+        _grid = Grid.GetInstance();
+        //_pather.StartDrawing();
+    }
+
+    public void DrawingComplete()
+    {
+        _gameState = GameState.Running;
+        _grid.HideGrid(true);
     }
 
     // Update is called once per frame

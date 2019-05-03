@@ -143,7 +143,7 @@ public class Pathfinder
 
             if (current.Equals(end))
             {
-                Reconstruct(start, current);
+                path = Reconstruct(start, current);
                 break;
             }
 

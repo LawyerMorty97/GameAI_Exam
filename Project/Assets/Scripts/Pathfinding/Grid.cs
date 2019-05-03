@@ -35,6 +35,34 @@ public class Grid : MonoBehaviour
             }
     }
 
+    public void ShowGrid()
+    {
+        for (int x = 0; x < MaxWidth; x++)
+            for (int y = 0; y < MaxHeight; y++)
+            {
+                grid[x, y].obj.SetActive(true);
+            }
+    }
+
+    public void HideGrid(bool hideWalls = false)
+    {
+        for (int x = 0; x < MaxWidth; x++)
+            for (int y = 0; y < MaxHeight; y++)
+            {
+                if (hideWalls)
+                {
+                    if (grid[x, y].walkable)
+                    {
+                        grid[x, y].obj.SetActive(false);
+                    }
+                }
+                else
+                {
+                    grid[x, y].obj.SetActive(false);
+                }
+            }
+    }
+
     public Node GetNode(int x, int y)
     {
         Node n = null;

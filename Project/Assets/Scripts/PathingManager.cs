@@ -14,6 +14,7 @@ public class PathingManager : MonoBehaviour
         Run
     }
 
+    public Material lineMaterial;
     public Text helper;
 
     private GameManager _game;
@@ -35,6 +36,11 @@ public class PathingManager : MonoBehaviour
         _grid = Grid.GetInstance();
         _pather = new Pathfinder();
         _line = gameObject.AddComponent<LineRenderer>();
+        _line.material = lineMaterial;
+        _line.startWidth = 0.28f;
+        _line.endWidth = 0.28f;
+        _line.startColor = Color.red;
+        _line.endColor = Color.black;
 
         _offset = new Vector2(_grid.GridBase.x + 0.5f, _grid.GridBase.y + 0.5f);
     }
@@ -49,8 +55,24 @@ public class PathingManager : MonoBehaviour
     {
         _tempStart = null;
         _tempEnd = null;
+        _grid.ShowGrid();
         _grid.ResetGrid();
         _path = null;
+
+        _line.positionCount = 0;
+    }
+
+    IEnumerator RenderLine()
+    {
+        _grid.HideGrid();
+        _path.Reverse();
+        int i = 0;
+        foreach (Node node in _path)
+        {
+            _line.SetPosition(i, new Vector3(_offset.x + node.x, 1f, _offset.y + node.y));
+            i += 1;
+            yield return new WaitForSeconds(0.05f);
+        }
     }
 
     private void AdvanceStage()
@@ -73,10 +95,11 @@ public class PathingManager : MonoBehaviour
             return;
         }
 
+        switchStage:
         switch (_stage)
         {
             case Stage.PlottingBlock:
-                helper.text = "Click on any square to toggle it\nPress space to plot a starting point";
+                helper.text = "Click on any square to toggle it (If you create a block path, the creator will force you to repeat)\nPress space to plot a starting point";
                 break;
             case Stage.PlottingStart:
                 helper.text = "Click on any square to place a start position\nPress space to plot an ending point";
@@ -85,18 +108,20 @@ public class PathingManager : MonoBehaviour
                 helper.text = "Click on any square to place an end position\nPress space to run the pathfinder";
                 break;
             case Stage.Run:
-                helper.text = "Press Enter to Play\nPress Space to Repath";
                 _path = _pather.AStar(_tempStart, _tempEnd);
+
+                if (_path.Count == 0)
+                {
+                    _stage = Stage.PlottingBlock;
+                    goto switchStage;
+                }
+
+                helper.text = "Press Enter to Play\nPress Space to Repath";
 
                 if (_path.Count > 0)
                 {
-                    _line.positionCount = _path.Count + 1;
-                    int i = 0;
-                    foreach (Node node in _path)
-                    {
-                        _line.SetPosition(i, new Vector3(node.x, 0.25f, node.y));
-                        i += 1;
-                    }
+                    _line.positionCount = _path.Count;
+                    StartCoroutine(RenderLine());
                 }
                 break;
         }
@@ -106,7 +131,11 @@ public class PathingManager : MonoBehaviour
     void Update()
     {
         if (_game.GetState() != GameManager.GameState.Drawing)
+        {
+            if (helper.text != "")
+                helper.text = "";
             return;
+        }
 
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
@@ -152,28 +181,7 @@ public class PathingManager : MonoBehaviour
                         _tempEnd = node;
                         _tempEnd.mat.color = Color.red;
                     }
-                    /*if (Input.GetMouseButtonDown(0))
-                    {
-                        if (node.walkable)
-                            _grid.ToggleNode(node, Grid.NodeType.Block);
-                        else
-                            _grid.ToggleNode(node, Grid.NodeType.Empty);
-                    }*/
                 }
-                /*Vector2 nodePosition = new Vector2(hit.transform.position.x, hit.transform.position.z) - _offset;
-                if (_grid.GetNode(nodePosition) != null)
-                {
-                    Node node = _grid.GetNode(nodePosition);
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        if (node.walkable)
-                            _grid.ToggleNode(node, Grid.NodeType.Block);
-                        else
-                            _grid.ToggleNode(node, Grid.NodeType.Empty);
-                    }
-                }*/
-
-                //Debug.Log("Clicked on: " + hit.transform.name);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Space))
@@ -187,6 +195,14 @@ public class PathingManager : MonoBehaviour
 
                 if (_stage == Stage.PlottingEnd && _tempEnd != null)
                     AdvanceStage();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (_stage == Stage.Run)
+            {
+                ResetEditor();
+                _game.DrawingComplete();
             }
         }
     }
