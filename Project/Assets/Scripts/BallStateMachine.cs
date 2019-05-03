@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BallStateMachine : MonoBehaviour
 {
+    Vector3 OriginalBallPosition = new Vector3(30f, 0.5f, 15f);
+
     private enum State
     {
         Idle,
@@ -12,18 +14,32 @@ public class BallStateMachine : MonoBehaviour
 
     private State _activeState = State.Idle;
     private Rigidbody _rb;
+    private GameObject _scorer;
+
+    public bool IsBallInPossession()
+    {
+        return (_activeState == State.Follow);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        _scorer = GameManager.instance.GetScorer();
         _rb = GetComponent<Rigidbody>();
+    }
+
+    public void Reset()
+    {
+        _rb.rotation = Quaternion.Euler(Vector3.zero);
+        _rb.velocity = Vector3.zero;
+        transform.position = OriginalBallPosition;
+        _activeState = State.Idle;
     }
 
     public void Transition()
     {
-        GameObject scorer = GameManager.instance.GetScorer();
-
-        float distance = Vector3.Distance(transform.position, scorer.transform.position);
+        float distance = Vector3.Distance(transform.position, _scorer.transform.position);
+        Vector3 velocity = _rb.velocity;
 
         if (_activeState == State.Idle)
         {
@@ -33,15 +49,16 @@ public class BallStateMachine : MonoBehaviour
             }
         } else if (_activeState == State.Follow)
         {
-            if (distance > 1.5f)
+            if (Vector3.Distance(velocity, Vector3.zero) > 1f)
                 _activeState = State.Idle;
+            /*if (distance > 2.75f)
+                _activeState = State.Idle;*/
         }
     }
 
     public void Action()
     {
-        GameObject scorer = GameManager.instance.GetScorer();
-        Vector3 normalizedDirection = (transform.position - scorer.transform.position).normalized;
+        Vector3 normalizedDirection = (transform.position - _scorer.transform.position).normalized;
         normalizedDirection.y = 0.5f;
 
         if (_activeState == State.Follow)
@@ -66,7 +83,10 @@ public class BallStateMachine : MonoBehaviour
             //Vector3 ballPos = scorer.transform.position + (normalizedDirection * 2f);
 
             //_rb.MovePosition(scorer.transform.position + (normalizedDirection * 3f));
-            _rb.AddForce(normalizedDirection * 100f);
+
+            transform.position = (_scorer.transform.position + (_scorer.transform.forward * 2f));
+
+            //_rb.AddForce(normalizedDirection * 20f);
         }
     }
 }

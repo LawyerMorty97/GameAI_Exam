@@ -1,0 +1,4 @@
+H:
+Heuristic, used Manhattan distance
+
+Manhattan Distance = Distance(a.x - b.x) + Distance(a.y - b.y)

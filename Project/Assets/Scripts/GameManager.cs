@@ -4,16 +4,22 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    const int MaxScore = 5;
+    public enum Team
+    {
+        Red,
+        Blue
+    }
+
     public enum GameState
     {
+        Running,
         Paused,
-        Keeping,
-        Scoring
+        Intermission,    // Intermission is used when a score occurs
+        Drawing,        // Game State to draw pathfinding
     }
-    public static GameManager instance = null;
 
-    private GameObject computer;
-    private GameObject player;
+    public static GameManager instance = null;
 
     public GameObject Ball
     {
@@ -21,13 +27,91 @@ public class GameManager : MonoBehaviour
         private set;
     }
 
-    private GameObject scorer_;
+    public int RedScore
+    {
+        get;
+        private set;
+    }
+
+    public int BlueScore
+    {
+        get;
+        private set;
+    }
+
+    private GameObject _scorer;
     private StateMachine _machine;
     private BallStateMachine _ballMachine;
+    private VelocityScript _playerMachine;
+    private PathingManager _pather;
+    private UIManager _ui;
+
+    private GameState _gameState;
+
+    public GameState GetState()
+    {
+        return _gameState;
+    }
 
     public GameObject GetScorer()
     {
-        return scorer_;
+        return _scorer;
+    }
+
+    public void AddScore(Team team)
+    {
+        switch(team)
+        {
+            case Team.Blue:
+                BlueScore += 1;
+                break;
+            case Team.Red:
+                RedScore += 1;
+                break;
+        }
+
+        StartCoroutine(ResetGame());
+    }
+
+    public Team GetWinner()
+    {
+        Team winner;
+
+        if (RedScore > BlueScore)
+            winner = Team.Red;
+        else
+            winner = Team.Blue;
+
+        return winner;
+    }
+
+    private IEnumerator ResetGame()
+    {
+        Debug.Log("Score is " + RedScore + " - " + BlueScore);
+        _gameState = GameState.Intermission;
+
+        bool isWin = false;
+        if (RedScore == MaxScore || BlueScore == MaxScore)
+        {
+            EventManager.TriggerEvent("OnWin");
+            isWin = true;
+        }
+        else
+        {
+            EventManager.TriggerEvent("OnGoal");
+        }
+
+        yield return new WaitForSeconds(5f);
+        _ballMachine.Reset();
+        _playerMachine.Reset();
+        _machine.Reset();
+        if (isWin)
+        {
+            RedScore = 0;
+            BlueScore = 0;
+        }
+        yield return new WaitForSeconds(1f);
+        _gameState = GameState.Running;
     }
 
     void Awake()
@@ -40,19 +124,27 @@ public class GameManager : MonoBehaviour
         Ball = GameObject.FindGameObjectWithTag("Ball");
 
         _machine = FindObjectOfType<StateMachine>();
-        computer = GameObject.FindGameObjectWithTag("Computer");
-        player = GameObject.FindGameObjectWithTag("Player");
-        scorer_ = player;
+        _scorer = GameObject.FindGameObjectWithTag("Player");
 
         _ballMachine = Ball.GetComponent<BallStateMachine>();
+        _gameState = GameState.Drawing;
+
+        _playerMachine = _scorer.GetComponent<VelocityScript>();
+
+        _pather = GetComponent<PathingManager>();
+        _pather.StartDrawing();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _ballMachine.Transition();
-        _ballMachine.Action();
-        //_machine.Transition();
-        //_machine.Action();
+        if (_gameState == GameState.Running)
+        {
+            _ballMachine.Transition();
+            _ballMachine.Action();
+
+            _machine.Transition();
+            _machine.Action();
+        }
     }
 }
