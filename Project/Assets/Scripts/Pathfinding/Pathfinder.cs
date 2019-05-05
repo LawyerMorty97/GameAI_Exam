@@ -133,7 +133,7 @@ public class Pathfinder
                 bool areFEqual = open[i].F == current.F;
                 bool isNextHBigger = open[i].H < current.H;
 
-                if (isNextFBigger || (areFEqual && isNextFBigger))
+                if (isNextFBigger || (areFEqual && isNextHBigger))
                     if (!current.Equals(open[i]))
                         current = open[i];
             }

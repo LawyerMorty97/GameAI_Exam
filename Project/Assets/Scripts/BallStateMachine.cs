@@ -24,7 +24,7 @@ public class BallStateMachine : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _scorer = GameManager.instance.GetScorer();
+        _scorer = GameManager.GetInstance().GetScorer();
         _rb = GetComponent<Rigidbody>();
     }
 

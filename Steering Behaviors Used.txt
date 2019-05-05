@@ -1,3 +1,0 @@
-Agent movement
-Seek (Targetting the ball)
-Arrive

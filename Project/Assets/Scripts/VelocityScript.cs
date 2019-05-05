@@ -23,7 +23,7 @@ public class VelocityScript : MonoBehaviour
         rb = gameObject.AddComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        _game = GameManager.instance;
+        _game = GameManager.GetInstance();
 
         _lines = gameObject.AddComponent<LineRenderer>();
         _lines.positionCount = 2;

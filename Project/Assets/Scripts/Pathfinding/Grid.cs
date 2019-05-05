@@ -44,12 +44,12 @@ public class Grid : MonoBehaviour
             }
     }
 
-    public void HideGrid(bool hideWalls = false)
+    public void HideGrid(bool hideWalls = true)
     {
         for (int x = 0; x < MaxWidth; x++)
             for (int y = 0; y < MaxHeight; y++)
             {
-                if (hideWalls)
+                if (!hideWalls)
                 {
                     if (grid[x, y].walkable)
                     {

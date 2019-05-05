@@ -23,6 +23,8 @@ public class PathingManager : MonoBehaviour
     private Vector2 _offset;
     private LineRenderer _line;
 
+    private GameObject _player;
+
     private Stage _stage = Stage.Start;
 
     private Node _tempStart;
@@ -32,7 +34,9 @@ public class PathingManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _game = GameManager.instance;
+        _game = GameManager.GetInstance();
+        _player = _game.GetScorer();
+
         _grid = Grid.GetInstance();
         _pather = new Pathfinder();
         _line = gameObject.AddComponent<LineRenderer>();
@@ -43,6 +47,11 @@ public class PathingManager : MonoBehaviour
         _line.endColor = Color.black;
 
         _offset = new Vector2(_grid.GridBase.x + 0.5f, _grid.GridBase.y + 0.5f);
+    }
+
+    public List<Node> GetPath()
+    {
+        return _path;
     }
 
     public void StartDrawing()
@@ -64,15 +73,19 @@ public class PathingManager : MonoBehaviour
 
     IEnumerator RenderLine()
     {
-        _grid.HideGrid();
+        //_grid.HideGrid();
         _path.Reverse();
         int i = 0;
         foreach (Node node in _path)
         {
-            _line.SetPosition(i, new Vector3(_offset.x + node.x, 1f, _offset.y + node.y));
+            Vector3 pos = new Vector3(_offset.x + node.x, 1f, _offset.y + node.y);
+            _line.SetPosition(i, pos);
+            _player.transform.position = pos;
+            _player.transform.LookAt(pos);
             i += 1;
             yield return new WaitForSeconds(0.05f);
         }
+        _grid.HideGrid(false);
     }
 
     private void AdvanceStage()

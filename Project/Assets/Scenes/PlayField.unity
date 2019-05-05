@@ -2884,7 +2884,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Current State:'
+  m_Text: 
 --- !u!222 &1513478869
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3402,9 +3402,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Click: Toggle node as walkable
-
-    Right-Click: Toggle node as start/stop point'
+  m_Text: Press Space to Start!
 --- !u!222 &2048297299
 CanvasRenderer:
   m_ObjectHideFlags: 0

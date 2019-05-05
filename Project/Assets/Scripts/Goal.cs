@@ -9,7 +9,7 @@ public class Goal : MonoBehaviour
     
     void Start()
     {
-        _game = GameManager.instance;
+        _game = GameManager.GetInstance();
     }
 
     void OnCollisionEnter(Collision col)

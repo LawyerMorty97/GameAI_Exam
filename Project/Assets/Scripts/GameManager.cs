@@ -19,7 +19,12 @@ public class GameManager : MonoBehaviour
         Drawing,        // Game State to draw pathfinding
     }
 
-    public static GameManager instance = null;
+    private static GameManager instance;
+
+    public static GameManager GetInstance()
+    {
+        return instance;
+    }
 
     public GameObject Ball
     {
@@ -118,11 +123,11 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
-            Destroy(gameObject);
+        instance = this;
+    }
 
+    void Start()
+    {
         Ball = GameObject.FindGameObjectWithTag("Ball");
 
         _machine = FindObjectOfType<StateMachine>();
@@ -135,13 +140,14 @@ public class GameManager : MonoBehaviour
 
         _pather = GetComponent<PathingManager>();
         _grid = Grid.GetInstance();
-        //_pather.StartDrawing();
+
+        _grid.HideGrid(true);
     }
 
     public void DrawingComplete()
     {
-        _gameState = GameState.Running;
         _grid.HideGrid(true);
+        _gameState = GameState.Running;
     }
 
     // Update is called once per frame

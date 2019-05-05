@@ -147,6 +147,7 @@ public class StateMachine : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, keeperPosition, ReturnSpeed * Time.deltaTime);
                 break;
             case State.Kick:
+                transform.LookAt(GameManager.GetInstance().GetScorer().transform);
                 if (distance < 3f)
                     _rb.AddForce(new Vector3(30f, 0f, 0f));
                 break;

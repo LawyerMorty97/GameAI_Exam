@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
             _active = true;
 
         _stateMachine = FindObjectOfType<StateMachine>();
-        _game = GameManager.instance;
+        _game = GameManager.GetInstance();
 
         EventManager.StartListening("OnGoal", RunGoal);
         EventManager.StartListening("OnWin", RunWin);
